@@ -1,8 +1,10 @@
 import Models
-
-model_EN = Models.Unigram('en-moby-dick.txt', 'en-the-little-prince.txt')
-model_FR = Models.Unigram('fr-le-petit-prince.txt', 'fr-vingt-mille-lieues-sous-les-mers.txt')
-print(model_FR.probabilities())
+files_en = ['en-moby-dick.txt', 'en-the-little-prince.txt']
+files_fr = ['fr-le-petit-prince.txt', 'fr-vingt-mille-lieues-sous-les-mers.txt']
+model_EN = Models.Unigram(files_en)
+# model_EN = Models.Unigram('en-the-little-prince.txt')
+# model_FR = Models.Unigram(files_fr)
+print(model_EN.probabilities_alpha())
 # sen2 = "What will the Japanese economy be like next year?"
 # sen3 = "She asked him if he was a student at this school."
 # sen4 = "I'm OK."
@@ -25,8 +27,9 @@ print(model_FR.probabilities())
 # print(sen9, "Prob in eng: ", model_EN.calc_prob_unigram(sen9), "Prob in fre: ", model_FR.calc_prob_unigram(sen9))
 # print(sen0, "Prob in eng: ", model_EN.calc_prob_unigram(sen0), "Prob in fre: ", model_FR.calc_prob_unigram(sen0))
 
-# model_EN = Bigram('en-moby-dick.txt', 'en-the-little-prince.txt')
-# model_FR = Bigram('fr-le-petit-prince.txt', 'fr-vingt-mille-lieues-sous-les-mers.txt')
+# model_EN = Models.Bigram('en-moby-dick.txt', 'en-the-little-prince.txt')
+# model_FR = Models.Bigram('fr-le-petit-prince.txt', 'fr-vingt-mille-lieues-sous-les-mers.txt')
+# print(model_EN.conditional_prob())
 #
 # sen2 = "What will the Japanese economy be like next year?"
 # sen3 = "She asked him if he was a student at this school."

@@ -4,19 +4,22 @@ import math
 
 class LanguageModel:
 
-    def __init__(self, filename):
-        self.text = LanguageModel.read_file(filename)
+    def __init__(self, filenames):
+        self.text = ''
+        for filename in filenames:
+            self.text += LanguageModel.read_file(filename)
         self.alphabets = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
                           't',
                           'u', 'v', 'w', 'x', 'y', 'z']
 
-    def __init__(self, filename, filename2):
-        self.book1 = LanguageModel.read_file(filename)
-        self.book2 = LanguageModel.read_file(filename2)
-        self.text = self.book1 + self.book2
-        self.alphabets = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
-                          't',
-                          'u', 'v', 'w', 'x', 'y', 'z']
+    @staticmethod
+    def write_file_lang_model(map, filename):
+        with open(filename, 'w') as f:
+            for key in map:
+                f.write(key + ' = ' + str(map[key]) + '\n')
+
+    @staticmethod
+    def write_
 
     @staticmethod
     def clean_sentence(sentence):
@@ -37,9 +40,10 @@ class LanguageModel:
 
 
 class Unigram(LanguageModel):
-    def __init__(self, filename, filename2):
-        super().__init__(filename, filename2)
+    def __init__(self, filenames):
+        super().__init__(filenames)
         self.alphabets_map = {}
+        self.probs_alpha = {}
         for c in self.text:
             if c in self.alphabets_map:
                 self.alphabets_map[c] += 1
@@ -66,20 +70,21 @@ class Unigram(LanguageModel):
             print(key, self.alphabets_map[key])
         # print(len(self.alphabets_map))
 
-    def probabilities(self):
-        probs_alpha = {}
+    def probabilities_alpha(self):
         for key in self.alphabets_map:
-            probs_alpha[key] = self.alphabets_map[key] / len(self.text)
-        return probs_alpha
+            self.probs_alpha[key] = self.alphabets_map[key] / len(self.text)
+        return self.probs_alpha
+
 
 class Bigram(LanguageModel):
-    def __init__(self, filename, filename2):
-        super().__init__(filename, filename2)
+
+    def __init__(self, filenames):
+        super().__init__(filenames)
         self.map_size = 26
+        self.cond_probs = {}
         self.bigram_map = [0] * self.map_size
         for i in range(self.map_size):
             self.bigram_map[i] = [0] * self.map_size
-        self.bigram_map[1][1] = 1
         for i in range(0, len(self.text) - 1):
             index_i = self.char_hash(self.text[i])
             index_j = self.char_hash(self.text[i + 1])
@@ -107,4 +112,13 @@ class Bigram(LanguageModel):
             prob += math.log(x)
         return prob
 
-
+    def conditional_prob(self):
+        for i in range(self.map_size):
+            for j in range(self.map_size):
+                char_i = self.get_char(i)
+                char_j = self.get_char(j)
+                x = (self.bigram_map[i][j] + 0.5) / (self.count_char[i] + 26 * 0.5)
+                key = '(' + char_i + '|' + char_j + ')'
+                self.cond_probs[key] = x
+        LanguageModel.write_file_lang_model(self.cond_probs, 'bigram.txt')
+        return self.cond_probs
